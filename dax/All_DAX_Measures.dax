@@ -1,0 +1,241 @@
+/* ==========================================================================
+   POWER BI PROJECT: HR ATTRITION & WORKFORCE ANALYTICS DASHBOARD
+   DAX MEASURES REPOSITORY
+   ==========================================================================
+   Author: Business Intelligence Analyst
+   Dataset: IBM HR Analytics Employee Attrition & Performance
+   Table Name: HR_Data (or HR_Employee_Attrition_Cleaned)
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. CORE WORKFORCE & ATTRITION METRICS
+   -------------------------------------------------------------------------- */
+
+// Total Employee Headcount
+Total Employees = 
+COUNTROWS('HR_Data')
+
+// Attrition Count (Employees who left the company)
+Attrition Count = 
+CALCULATE(
+    COUNTROWS('HR_Data'),
+    'HR_Data'[Attrition] = "Yes"
+)
+
+// Active Employees (Currently employed)
+Active Employees = 
+CALCULATE(
+    COUNTROWS('HR_Data'),
+    'HR_Data'[Attrition] = "No"
+)
+
+// Overall Attrition Rate %
+Attrition Rate = 
+DIVIDE(
+    [Attrition Count],
+    [Total Employees],
+    0
+)
+
+// Active Retention Rate %
+Retention Rate = 
+DIVIDE(
+    [Active Employees],
+    [Total Employees],
+    0
+)
+
+/* --------------------------------------------------------------------------
+   2. DEMOGRAPHIC & GENDER ANALYSIS MEASURES
+   -------------------------------------------------------------------------- */
+
+// Total Male Employees
+Male Employees = 
+CALCULATE(
+    COUNTROWS('HR_Data'),
+    'HR_Data'[Gender] = "Male"
+)
+
+// Total Female Employees
+Female Employees = 
+CALCULATE(
+    COUNTROWS('HR_Data'),
+    'HR_Data'[Gender] = "Female"
+)
+
+// Male Attrition Count
+Male Attrition Count = 
+CALCULATE(
+    [Attrition Count],
+    'HR_Data'[Gender] = "Male"
+)
+
+// Female Attrition Count
+Female Attrition Count = 
+CALCULATE(
+    [Attrition Count],
+    'HR_Data'[Gender] = "Female"
+)
+
+// Male Attrition Rate %
+Male Attrition Rate = 
+DIVIDE(
+    [Male Attrition Count],
+    [Male Employees],
+    0
+)
+
+// Female Attrition Rate %
+Female Attrition Rate = 
+DIVIDE(
+    [Female Attrition Count],
+    [Female Employees],
+    0
+)
+
+// Average Employee Age
+Average Age = 
+AVERAGE('HR_Data'[Age])
+
+// Average Distance from Home (in km / miles)
+Average Distance From Home = 
+AVERAGE('HR_Data'[DistanceFromHome])
+
+/* --------------------------------------------------------------------------
+   3. COMPENSATION & SALARY MEASURES
+   -------------------------------------------------------------------------- */
+
+// Total Monthly Payroll
+Total Monthly Payroll = 
+SUM('HR_Data'[MonthlyIncome])
+
+// Average Monthly Income
+Average Monthly Income = 
+AVERAGE('HR_Data'[MonthlyIncome])
+
+// Average Monthly Income for Attrition Employees
+Avg Income - Attrition = 
+CALCULATE(
+    AVERAGE('HR_Data'[MonthlyIncome]),
+    'HR_Data'[Attrition] = "Yes"
+)
+
+// Average Monthly Income for Active Employees
+Avg Income - Active = 
+CALCULATE(
+    AVERAGE('HR_Data'[MonthlyIncome]),
+    'HR_Data'[Attrition] = "No"
+)
+
+// Average Hourly Rate
+Average Hourly Rate = 
+AVERAGE('HR_Data'[HourlyRate])
+
+// Average Percentage Salary Hike
+Average Salary Hike % = 
+DIVIDE(
+    AVERAGE('HR_Data'[PercentSalaryHike]),
+    100,
+    0
+)
+
+/* --------------------------------------------------------------------------
+   4. TENURE, PROMOTION & EXPERIENCE MEASURES
+   -------------------------------------------------------------------------- */
+
+// Average Total Working Experience (Years)
+Average Total Working Years = 
+AVERAGE('HR_Data'[TotalWorkingYears])
+
+// Average Years at Current Company
+Average Years at Company = 
+AVERAGE('HR_Data'[YearsAtCompany])
+
+// Average Years in Current Role
+Average Years in Role = 
+AVERAGE('HR_Data'[YearsInCurrentRole])
+
+// Average Years Since Last Promotion
+Average Years Since Last Promotion = 
+AVERAGE('HR_Data'[YearsSinceLastPromotion])
+
+// Average Years with Current Manager
+Average Years with Curr Manager = 
+AVERAGE('HR_Data'[YearsWithCurrManager])
+
+/* --------------------------------------------------------------------------
+   5. WORK-LIFE BALANCE, OVERTIME & SATISFACTION METRICS
+   -------------------------------------------------------------------------- */
+
+// OverTime Employee Count
+OverTime Employees = 
+CALCULATE(
+    COUNTROWS('HR_Data'),
+    'HR_Data'[OverTime] = "Yes"
+)
+
+// Attrition Count among OverTime Employees
+OverTime Attrition Count = 
+CALCULATE(
+    [Attrition Count],
+    'HR_Data'[OverTime] = "Yes"
+)
+
+// Attrition Rate among OverTime Employees
+OverTime Attrition Rate = 
+DIVIDE(
+    [OverTime Attrition Count],
+    [OverTime Employees],
+    0
+)
+
+// Non-OverTime Employee Count
+Non-OverTime Employees = 
+CALCULATE(
+    COUNTROWS('HR_Data'),
+    'HR_Data'[OverTime] = "No"
+)
+
+// Attrition Rate among Non-OverTime Employees
+Non-OverTime Attrition Rate = 
+DIVIDE(
+    CALCULATE([Attrition Count], 'HR_Data'[OverTime] = "No"),
+    [Non-OverTime Employees],
+    0
+)
+
+// Average Job Satisfaction Score (1 to 4 scale)
+Average Job Satisfaction = 
+AVERAGE('HR_Data'[JobSatisfaction])
+
+// Average Environment Satisfaction Score (1 to 4 scale)
+Average Environment Satisfaction = 
+AVERAGE('HR_Data'[EnvironmentSatisfaction])
+
+// Average Work-Life Balance Score (1 to 4 scale)
+Average Work Life Balance = 
+AVERAGE('HR_Data'[WorkLifeBalance])
+
+// Average Relationship Satisfaction Score (1 to 4 scale)
+Average Relationship Satisfaction = 
+AVERAGE('HR_Data'[RelationshipSatisfaction])
+
+/* --------------------------------------------------------------------------
+   6. DYNAMIC FORMATTING & KPI STATUS MEASURES
+   -------------------------------------------------------------------------- */
+
+// Dynamic KPI Title: Department Filter Context
+Selected Department Title = 
+IF(
+    ISFILTERED('HR_Data'[Department]),
+    "Selected Dept: " & SELECTEDVALUE('HR_Data'[Department], "Multiple Departments"),
+    "All Departments Overview"
+)
+
+// High Risk Attrition Role Alert
+High Risk Role Indicator = 
+IF(
+    [Attrition Rate] > 0.20,
+    "High Risk (>20%)",
+    "Normal"
+)

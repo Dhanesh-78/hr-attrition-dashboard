@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>HR Attrition Power BI Project Report</title>
+<style>
+    @page { size: A4; margin: 20mm; }
+    body { font-family: 'Segoe UI', Calibri, Arial, sans-serif; color: #1e293b; line-height: 1.6; padding: 30px; background: #fff; max-width: 900px; margin: 0 auto; }
+    h1.project-title { color: #0f172a; font-size: 24pt; border-bottom: 3px solid #ef4444; padding-bottom: 10px; margin-bottom: 20px; }
+    h2.section-title { color: #1e3a8a; font-size: 16pt; border-bottom: 2px solid #e2e8f0; padding-bottom: 6px; margin-top: 30px; }
+    h3.sub-section { color: #2563eb; font-size: 13pt; margin-top: 20px; }
+    .report-table { width: 100%; border-collapse: collapse; margin: 15px 0; font-size: 9.5pt; }
+    .report-table th, .report-table td { border: 1px solid #cbd5e1; padding: 7px 10px; text-align: left; }
+    .report-table th { background: #f1f5f9; font-weight: 600; color: #0f172a; }
+    .report-table tr:nth-child(even) { background: #f8fafc; }
+    pre { background: #0f172a; color: #e2e8f0; padding: 12px; border-radius: 6px; font-family: Consolas, monospace; font-size: 9pt; overflow-x: auto; }
+    code { background: #f1f5f9; color: #0369a1; padding: 2px 4px; border-radius: 4px; font-family: Consolas, monospace; font-size: 9pt; }
+    pre code { background: transparent; color: inherit; padding: 0; }
+</style>
+</head>
+<body>
+<h1 class="project-title">WORKFORCE RETENTION & HR ATTRITION ANALYTICS DASHBOARD</h1><p><strong>End-to-End Business Intelligence Project</strong>  </p><p><strong>Tool:</strong> Microsoft Power BI Desktop  </p><p><strong>Dataset:</strong> IBM HR Analytics Employee Attrition & Performance (1,470 Records, 35 Attributes)  </p><hr class="divider"/><h2 class="section-title">1. PROJECT OVERVIEW & EXECUTIVE SUMMARY</h2><h3 class="sub-section">1.1 Business Problem Statement</h3><p>High employee turnover (attrition) severely impacts organizational productivity, team morale, and operating profit. Replacing a salaried professional typically costs <strong>1.5× to 2× their annual salary</strong> due to recruitment agency fees, advertising, interviewing hours, onboarding, training, and lost project momentum.</p><p>The objective of this Power BI project is to analyze the historical workforce dataset of <strong>1,470 employees</strong>, diagnose the root causes behind employee resignations, uncover high-risk demographic and organizational segments, and deliver an interactive, executive-ready dashboard for HR leadership to take proactive retention interventions.</p><h3 class="sub-section">1.2 Key Project Metrics At A Glance</h3><li><strong>Total Employee Headcount:</strong> 1,470</li><li><strong>Total Attrition Count:</strong> 237 employees separated</li><li><strong>Active Employees:</strong> 1,233 retained</li><li><strong>Overall Corporate Attrition Rate:</strong> <strong>16.12%</strong> (Industry benchmark is typically 12% - 15%)</li><li><strong>Average Employee Age:</strong> 36.9 Years</li><li><strong>Average Monthly Income:</strong> $6,503</li><li><strong>Average Tenure at Company:</strong> 7.0 Years</li><li><strong>Total Monthly Payroll:</strong> $9.56 Million</li><hr class="divider"/><h2 class="section-title">2. DATASET ARCHITECTURE & DATA DICTIONARY</h2><p>The dataset contains employee demographics, job roles, compensation details, survey satisfaction ratings, and historical career trajectory:</p><table class="report-table">
+<tr><th>Category</th><th>Attributes</th><th>Description & Values</th></tr>
+<tr><td><strong>Identifiers & Status</strong></td><td><code>EmployeeNumber</code>, <code>Attrition</code></td><td>Primary Key; Target variable: <code>Yes</code> (Left), <code>No</code> (Stayed)</td></tr>
+<tr><td><strong>Demographics</strong></td><td><code>Age</code>, <code>Gender</code>, <code>MaritalStatus</code>, <code>DistanceFromHome</code></td><td>Age in years, Male/Female, Single/Married/Divorced, Commute distance in km</td></tr>
+<tr><td><strong>Academic Background</strong></td><td><code>Education</code>, <code>EducationField</code></td><td>Level 1-5 (Below College to Doctor), Field: Life Sciences, Medical, Marketing, etc.</td></tr>
+<tr><td><strong>Organizational Placement</strong></td><td><code>Department</code>, <code>JobRole</code>, <code>JobLevel</code></td><td>Department (Sales, R&D, HR); 9 distinct job roles; Hierarchy level 1 to 5</td></tr>
+<tr><td><strong>Compensation</strong></td><td><code>MonthlyIncome</code>, <code>HourlyRate</code>, <code>DailyRate</code>, <code>MonthlyRate</code>, <code>PercentSalaryHike</code>, <code>StockOptionLevel</code></td><td>Financial compensation figures, % increase in last review, stock grants</td></tr>
+<tr><td><strong>Work Habits & Hours</strong></td><td><code>OverTime</code>, <code>BusinessTravel</code>, <code>TotalWorkingYears</code></td><td>Mandatory overtime (<code>Yes</code>/<code>No</code>), Travel frequency, Total career experience</td></tr>
+<tr><td><strong>Tenure & Progression</strong></td><td><code>YearsAtCompany</code>, <code>YearsInCurrentRole</code>, <code>YearsSinceLastPromotion</code>, <code>YearsWithCurrManager</code></td><td>Time spent with the employer, role stagnation, promotion timeline</td></tr>
+<tr><td><strong>Employee Surveys</strong></td><td><code>JobSatisfaction</code>, <code>EnvironmentSatisfaction</code>, <code>RelationshipSatisfaction</code>, <code>WorkLifeBalance</code></td><td>1-4 Likert Scale: (1=Low/Bad, 2=Medium/Good, 3=High/Better, 4=Very High/Best)</td></tr>
+</table><hr class="divider"/><h2 class="section-title">3. DATA PREPROCESSING & POWER QUERY (ETL)</h2><p>Before building visualizations, raw data was cleaned and augmented in <strong>Power Query Editor</strong>:</p><h3 class="sub-section">Step 1: Remove Redundant Constant Columns</h3><p>The following columns contain only a single static value across all 1,470 rows and offer zero analytical variance:</p><li><code>EmployeeCount</code> (always <code>1</code>)</li><li><code>Over18</code> (always <code>'Y'</code>)</li><li><code>StandardHours</code> (always <code>80</code>)</li><p><em>Action:</em> Select columns $&rarr;$ Right Click $&rarr;$ <strong>Remove Columns</strong>.</p><h3 class="sub-section">Step 2: Feature Engineering & Bucket Creation</h3><p>To create intuitive slicing dimensions, conditional/calculated columns were engineered:</p><div class="step-line"><b>1. </b> <strong>Attrition Numeric Flag:</strong></div><p>   <code></code>`powerquery</p><p>   if [Attrition] = "Yes" then 1 else 0</p><p>   <code></code>`</p><p>   <em>(Data Type: Whole Number <code>123</code>)</em></p><div class="step-line"><b>2. </b> <strong>Age Group (Bins):</strong></div><p>   - <code>< 25</code>: Under 25 (Junior Cohort)</p><p>   - <code>25 - 34</code>: 25 to 34 (Core Professional)</p><p>   - <code>35 - 44</code>: 35 to 44 (Mid-Career)</p><p>   - <code>45 - 54</code>: 45 to 54 (Senior Professional)</p><p>   - <code>55+</code>: 55 and above (Veterans)</p><div class="step-line"><b>3. </b> <strong>Salary Slabs (Monthly Income):</strong></div><p>   - <code>Upto $3,000</code> (Entry level)</p><p>   - <code>$3,001 - $6,000</code> (Mid level)</p><p>   - <code>$6,001 - $10,000</code> (Senior)</p><p>   - <code>$10,001 - $15,000</code> (Principal / Director)</p><p>   - <code>Above $15,000</code> (Executive Leadership)</p><div class="step-line"><b>4. </b> <strong>Tenure Brackets (<code>YearsAtCompany</code>):</strong></div><p>   - <code>0 - 2 Years</code> (New Hires)</p><p>   - <code>3 - 5 Years</code> (Established)</p><p>   - <code>6 - 10 Years</code> (Tenured)</p><p>   - <code>10+ Years</code> (Veterans)</p><div class="step-line"><b>5. </b> <strong>Distance Group (<code>DistanceFromHome</code>):</strong></div><p>   - <code>Near (1 - 5 km)</code></p><p>   - <code>Moderate (6 - 15 km)</code></p><p>   - <code>Far (> 15 km)</code></p><hr class="divider"/><h2 class="section-title">4. DAX MEASURES REPOSITORY</h2><p>Create a dedicated disconnected table named <code>_Measures</code> to store all business logic cleanly:</p><h3 class="sub-section">4.1 Core Volume & Rate Measures</h3><pre><code class="dax">// Total Workforce
+Total Employees = COUNTROWS('HR_Data')
+
+// Attrition Volume
+Attrition Count = 
+CALCULATE(
+    COUNTROWS('HR_Data'),
+    'HR_Data'[Attrition] = "Yes"
+)
+
+// Retained Active Headcount
+Active Employees = 
+CALCULATE(
+    COUNTROWS('HR_Data'),
+    'HR_Data'[Attrition] = "No"
+)
+
+// Primary KPI: Attrition Rate
+Attrition Rate = 
+DIVIDE(
+    [Attrition Count],
+    [Total Employees],
+    0
+)
+
+// Retention Rate
+Retention Rate = 
+DIVIDE(
+    [Active Employees],
+    [Total Employees],
+    0
+)</code></pre><h3 class="sub-section">4.2 Gender & Demographics Measures</h3><pre><code class="dax">Male Employees = CALCULATE(COUNTROWS('HR_Data'), 'HR_Data'[Gender] = "Male")
+Female Employees = CALCULATE(COUNTROWS('HR_Data'), 'HR_Data'[Gender] = "Female")
+
+Male Attrition Rate = 
+DIVIDE(
+    CALCULATE([Attrition Count], 'HR_Data'[Gender] = "Male"),
+    [Male Employees],
+    0
+)
+
+Female Attrition Rate = 
+DIVIDE(
+    CALCULATE([Attrition Count], 'HR_Data'[Gender] = "Female"),
+    [Female Employees],
+    0
+)
+
+Average Age = AVERAGE('HR_Data'[Age])
+Average Distance From Home = AVERAGE('HR_Data'[DistanceFromHome])</code></pre><h3 class="sub-section">4.3 Compensation & Overtime Risk Measures</h3><pre><code class="dax">Average Monthly Income = AVERAGE('HR_Data'[MonthlyIncome])
+
+// OverTime vs Non-OverTime Churn
+OverTime Attrition Rate = 
+DIVIDE(
+    CALCULATE([Attrition Count], 'HR_Data'[OverTime] = "Yes"),
+    CALCULATE(COUNTROWS('HR_Data'), 'HR_Data'[OverTime] = "Yes"),
+    0
+)
+
+Non-OverTime Attrition Rate = 
+DIVIDE(
+    CALCULATE([Attrition Count], 'HR_Data'[OverTime] = "No"),
+    CALCULATE(COUNTROWS('HR_Data'), 'HR_Data'[OverTime] = "No"),
+    0
+)</code></pre><hr class="divider"/><h2 class="section-title">5. DASHBOARD ARCHITECTURE & VISUAL DESIGN</h2><p>The dashboard is structured into <strong>3 functional, interactive analytical pages</strong>:</p><pre><code class="">┌────────────────────────────────────────────────────────────────────────┐
+│                   HR ATTRITION EXECUTIVE DASHBOARD                     │
+├──────────────────┬─────────────────────────────┬───────────────────────┤
+│ PAGE 1: OVERVIEW │ PAGE 2: DEMOGRAPHICS &amp; EDU  │ PAGE 3: COMP &amp; WLB    │
+└──────────────────┴─────────────────────────────┴───────────────────────┘</code></pre><hr class="divider"/><h3 class="sub-section">PAGE 1: EXECUTIVE OVERVIEW (THE HEADLINE COCKPIT)</h3><p><strong>Objective:</strong> Give the Chief Human Resources Officer (CHRO) an immediate high-level summary of headcount, turnover rate, department exposure, and critical role vulnerabilities.</p><h4 class="part-title">1. KPI Cards (Top Banner)</h4><li><strong>Card 1: Total Employees:</strong> <code>[Total Employees]</code> $&rarr;$ <strong>1,470</strong></li><li><strong>Card 2: Active Employees:</strong> <code>[Active Employees]</code> $&rarr;$ <strong>1,233</strong> (Formatted Green)</li><li><strong>Card 3: Attrition Count:</strong> <code>[Attrition Count]</code> $&rarr;$ <strong>237</strong> (Formatted Crimson Red)</li><li><strong>Card 4: Attrition Rate %:</strong> <code>[Attrition Rate]</code> $&rarr;$ <strong>16.12%</strong></li><li><strong>Card 5: Average Age:</strong> <code>[Average Age]</code> $&rarr;$ <strong>36.9 Years</strong></li><li><strong>Card 6: Average Monthly Income:</strong> <code>[Average Monthly Income]</code> $&rarr;$ <strong>$6,503</strong></li><h4 class="part-title">2. Visual 1: Attrition Rate by Department</h4><li><strong>Visual Type:</strong> Donut Chart or Horizontal Clustered Bar</li><li><strong>Field Settings:</strong></li><p>  - <code>Department</code> $&rarr;$ Legend / Y-axis</p><p>  - <code>[Attrition Rate]</code> $&rarr;$ Values / X-axis</p><li><strong>Output:</strong></li><p>  - <strong>Sales:</strong> <strong>20.63%</strong> (92 departed / 446 staff)</p><p>  - <strong>Human Resources:</strong> <strong>19.05%</strong> (12 departed / 63 staff)</p><p>  - <strong>Research & Development:</strong> <strong>13.84%</strong> (133 departed / 961 staff)</p><h4 class="part-title">3. Visual 2: The Overtime Smoking Gun</h4><li><strong>Visual Type:</strong> 100% Stacked Bar Chart</li><li><strong>Field Settings:</strong></li><p>  - <code>OverTime</code> $&rarr;$ Y-axis (<code>Yes</code>, <code>No</code>)</p><p>  - <code>[Attrition Count]</code> & <code>[Active Employees]</code> $&rarr;$ X-axis</p><li><strong>Output:</strong></li><p>  - OverTime <code>Yes</code>: <strong>30.53% Attrition</strong></p><p>  - OverTime <code>No</code>: <strong>10.44% Attrition</strong></p><p>  - <em>Finding:</em> Employees required to work overtime leave at <strong>300%</strong> the rate of non-overtime staff.</p><h4 class="part-title">4. Visual 3: Attrition by Job Role (Risk Matrix)</h4><li><strong>Visual Type:</strong> Clustered Bar Chart (Horizontal) sorted descending by Attrition Rate</li><li><strong>Field Settings:</strong></li><p>  - <code>JobRole</code> $&rarr;$ Y-axis</p><p>  - <code>[Attrition Rate]</code> $&rarr;$ X-axis</p><p>  - <code>[Attrition Count]</code> $&rarr;$ Tooltips</p><li><strong>Output Ranking:</strong></li><p>  1. <strong>Sales Representative:</strong> <strong>39.76%</strong> <em>(Extreme Risk)</em></p><p>  2. <strong>Laboratory Technician:</strong> <strong>23.94%</strong> <em>(High Risk)</em></p><p>  3. <strong>Human Resources:</strong> <strong>23.08%</strong> <em>(High Risk)</em></p><p>  4. <strong>Sales Executive:</strong> <strong>17.48%</strong></p><p>  5. <strong>Research Scientist:</strong> <strong>16.10%</strong></p><p>  6. <strong>Manufacturing Director:</strong> <strong>6.90%</strong></p><p>  7. <strong>Healthcare Representative:</strong> <strong>6.87%</strong></p><p>  8. <strong>Manager:</strong> <strong>4.90%</strong></p><p>  9. <strong>Research Director:</strong> <strong>2.50%</strong> <em>(Most Stable)</em></p><hr class="divider"/><h3 class="sub-section">PAGE 2: DEMOGRAPHICS & EDUCATION ANALYSIS</h3><p><strong>Objective:</strong> Understand personal, generational, and educational factors driving turnover.</p><h4 class="part-title">1. Visual 1: Attrition by Age Bracket</h4><li><strong>Visual Type:</strong> Clustered Column Chart</li><li><strong>Field Settings:</strong></li><p>  - <code>Age_Group</code> $&rarr;$ X-axis (<code>< 25</code>, <code>25-34</code>, <code>35-44</code>, <code>45-54</code>, <code>55+</code>)</p><p>  - <code>[Attrition Rate]</code> $&rarr;$ Y-axis</p><li><strong>Key Output:</strong></li><p>  - <code>< 25 Years</code>: <strong>39.18% Attrition</strong> <em>(Nearly 4 in 10 young employees resign)</em></p><p>  - <code>25 - 34 Years</code>: <strong>19.79%</strong></p><p>  - <code>35 - 44 Years</code>: <strong>10.12%</strong></p><p>  - <code>45 - 54 Years</code>: <strong>10.20%</strong></p><p>  - <code>55+ Years</code>: <strong>18.97%</strong> <em>(Retirement / senior transitions)</em></p><h4 class="part-title">2. Visual 2: Marital Status & Gender Cross-Tabulation</h4><li><strong>Visual Type:</strong> Stacked Column Chart</li><li><strong>Field Settings:</strong></li><p>  - <code>MaritalStatus</code> $&rarr;$ X-axis (<code>Single</code>, <code>Married</code>, <code>Divorced</code>)</p><p>  - <code>Gender</code> $&rarr;$ Legend</p><p>  - <code>[Attrition Rate]</code> $&rarr;$ Y-axis</p><li><strong>Key Output:</strong></li><p>  - <strong>Single Employees:</strong> <strong>25.53% Attrition</strong> (High mobility)</p><p>  - <strong>Married Employees:</strong> <strong>12.48% Attrition</strong></p><p>  - <strong>Divorced Employees:</strong> <strong>10.09% Attrition</strong></p><h4 class="part-title">3. Visual 3: Commute Distance vs Turnover</h4><li><strong>Visual Type:</strong> Clustered Bar Chart</li><li><strong>Field Settings:</strong></li><p>  - <code>Distance_Group</code> $&rarr;$ Y-axis</p><p>  - <code>[Attrition Rate]</code> $&rarr;$ X-axis</p><li><strong>Key Output:</strong></li><p>  - <code>Near (1-5 km)</code>: <strong>13.88%</strong></p><p>  - <code>Moderate (6-15 km)</code>: <strong>15.06%</strong></p><p>  - <code>Far (> 15 km)</code>: <strong>21.35%</strong> (54% higher churn for long commuters)</p><hr class="divider"/><h3 class="sub-section">PAGE 3: COMPENSATION & WORK-LIFE BALANCE</h3><p><strong>Objective:</strong> Uncover how financial rewards and psychological well-being correlate with retention.</p><h4 class="part-title">1. Visual 1: Attrition by Monthly Income Slab</h4><li><strong>Visual Type:</strong> Stacked Bar Chart</li><li><strong>Field Settings:</strong></li><p>  - <code>Salary_Slab</code> $&rarr;$ Y-axis</p><p>  - <code>[Attrition Rate]</code> $&rarr;$ X-axis</p><li><strong>Key Output:</strong></li><p>  - <code>Upto $3,000 / mo</code>: <strong>28.84%</strong> (Underpaid staff seek greener pastures)</p><p>  - <code>$3,001 - $6,000 / mo</code>: <strong>14.77%</strong></p><p>  - <code>$6,001 - $10,000 / mo</code>: <strong>8.94%</strong></p><p>  - <code>Above $15,000 / mo</code>: <strong>7.69%</strong></p><h4 class="part-title">2. Visual 2: Job Satisfaction Rating vs Attrition</h4><li><strong>Visual Type:</strong> Donut Chart or Treemap</li><li><strong>Field Settings:</strong></li><p>  - <code>JobSatisfaction_Label</code> $&rarr;$ Category / Legend</p><p>  - <code>[Attrition Count]</code> $&rarr;$ Values</p><li><strong>Key Output:</strong></li><p>  - Level 1 (Low): <strong>22.84% Attrition</strong></p><p>  - Level 2 (Medium): <strong>16.43%</strong></p><p>  - Level 3 (High): <strong>16.52%</strong></p><p>  - Level 4 (Very High): <strong>11.33% Attrition</strong></p><hr class="divider"/><h2 class="section-title">6. KEY ANALYTICAL FINDINGS & ROOT CAUSES</h2><div class="step-line"><b>1. </b> <strong>The Overtime Catalyst:</strong></div><p>   Employees clocking mandatory overtime represent <strong>53.6% of all resignations</strong> despite constituting only 28.3% of the headcount. Their attrition rate is <strong>30.5%</strong> vs. <strong>10.4%</strong> for non-overtime peers.</p><div class="step-line"><b>2. </b> <strong>The Entry-Level Sales Trap:</strong></div><p>   Sales Representatives suffer an alarming <strong>39.8% attrition rate</strong>, plagued by a low average monthly salary ($2,626), high quota pressure, and frequent field travel.</p><div class="step-line"><b>3. </b> <strong>Early-Career Flight Risk:</strong></div><p>   Staff younger than 25 years exhibit a <strong>39.2% attrition rate</strong>. Young talent joins for experience but departs rapidly if clear mentorship and promotions are delayed.</p><div class="step-line"><b>4. </b> <strong>The Compensation Cliff:</strong></div><p>   Employees earning below <strong>$3,000/month</strong> churn at <strong>28.8%</strong>, while those earning above $6,000 churn at less than <strong>9%</strong>.</p><div class="step-line"><b>5. </b> <strong>Commute Fatigue:</strong></div><p>   Workers living farther than <strong>15 km</strong> from the office experience a <strong>21.4% attrition rate</strong> compared to <strong>13.9%</strong> for those living within 5 km.</p><hr class="divider"/><h2 class="section-title">7. STRATEGIC HR RECOMMENDATIONS & ACTION PLAN</h2><table class="report-table">
+<tr><th>Priority</th><th>Risk Trigger</th><th>Recommended Strategic HR Initiative</th><th>Expected Impact</th></tr>
+<tr><td><strong>P1</strong></td><td><strong>Chronic Overtime Burnout</strong></td><td>Implement strict quarterly overtime ceilings (max 10 hrs/week) and hire additional contract/temporary staff in high-volume laboratory and sales operations.</td><td>Reduce overtime attrition from 30.5% to < 18%.</td></tr>
+<tr><td><strong>P2</strong></td><td><strong>Sales Rep Turnover (39.8%)</strong></td><td>Restructure the compensation model: elevate the base salary threshold to >$3,200/month and adjust commission triggers. Introduce a structured career pathway into senior "Sales Executive" roles within 18 months.</td><td>Save ~15 sales reps annually (~$750k replacement cost).</td></tr>
+<tr><td><strong>P3</strong></td><td><strong>Junior Staff Flight (<25 yrs)</strong></td><td>Launch a 12-month <strong>Early Career Mentorship Program</strong> pairing new graduates with senior Managers and Directors.</td><td>Improve 1st-year retention by 25%.</td></tr>
+<tr><td><strong>P4</strong></td><td><strong>Commute Fatigue (>15 km)</strong></td><td>Offer a <strong>Hybrid Work Policy</strong> (2-3 days work-from-home per week) or subsidized shuttle bus passes for employees residing outside the 15 km zone.</td><td>Moderate distance-related churn by ~30%.</td></tr>
+</table><hr class="divider"/><h2 class="section-title">8. PROJECT ARTIFACT DIRECTORY</h2><p>All assets for this project are locally accessible in:  </p><p>📁 <code>C:\Users\danes\.gemini\antigravity\scratch\hr_attrition_dashboard_project\</code></p><li><strong>Cleaned Dataset (CSV):</strong> <code>data/HR_Employee_Attrition_Cleaned.csv</code></li><li><strong>Cleaned Dataset (Excel):</strong> <code>data/HR_Employee_Attrition.xlsx</code></li><li><strong>DAX Formula Codebase:</strong> <code>dax/All_DAX_Measures.dax</code></li><li><strong>Interactive Web Preview:</strong> <code>dashboard_preview/HR_Attrition_Interactive_Dashboard.html</code></li><li><strong>Complete Project Report:</strong> <code>documentation/HR_Attrition_Project_Report.md</code></li>
+</body>
+</html>

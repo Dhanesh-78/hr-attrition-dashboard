@@ -1,0 +1,7 @@
+# Temporary and cache files
+*.tmp
+*.log
+*.ps1
+__pycache__/
+.DS_Store
+Thumbs.db
